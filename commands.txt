@@ -1,0 +1,92 @@
+pip install firebase-admin
+pip install pyrebase
+
+
+Then, create a Firebase project and set up the Realtime Database. You'll also need to create a new service account key in Firebase and download the JSON file.
+
+Here's the code for the program: 
+
+
+import firebase_admin
+from firebase_admin import credentials, db
+import pyrebase
+
+
+
+
+# Set up Firebase credentials
+cred = credentials.Certificate('path/to/serviceAccountKey.json')
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://your-database-name.firebaseio.com/'
+})
+
+# Set up Pyrebase
+config = {
+  "apiKey": "yourApiKey",
+  "authDomain": "your-project-id.firebaseapp.com",
+  "databaseURL": "https://your-database-name.firebaseio.com/",
+  "storageBucket": "your-project-id.appspot.com"
+}
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
+
+# Log in user
+email = input('Enter your email: ')
+password = input('Enter your password: ')
+user = auth.sign_in_with_email_and_password(email, password)
+
+# Set up Firebase Realtime Database
+root = db.reference()
+
+# Send messages
+while True:
+    recipient = input('Enter recipient email: ')
+    message = input('Enter message: ')
+
+    # Save message to database
+    root.child('messages').push({
+        'sender': email,
+        'recipient': recipient,
+        'message': message
+    })
+
+    print('Message sent.')
+    
+    
+    
+    
+
+This program will prompt the user to enter their email and password to log in. Then, the user can enter the email of the recipient and a message to send. The program will save the message to the Firebase Realtime Database, and the recipient can see the message in real-time by reading from the same database location.
+
+You can also add functionality for reading messages from the database and displaying them in the program. To do this, you can use Firebase's event listener to listen for changes to the messages location in the database:
+
+
+
+
+
+
+
+def handle_message_added(event):
+    message = event.data
+    if message['recipient'] == email:
+        print(f'{message["sender"]}: {message["message"]}')
+
+root.child('messages').listen(handle_message_added)
+
+
+
+
+
+This code will print any new messages sent to the logged-in user to the console. You can add this code to the end of the program to continuously listen for new messages.
+
+
+
+
+
+
+
+
+
+
+
+

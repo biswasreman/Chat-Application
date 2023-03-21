@@ -17,10 +17,8 @@ firebaseConfig ={
 firebase = pyrebase.initialize_app(firebaseConfig)
 db = firebase.database()
 
+print("PERSON 2 LIVE LISTENING...")
 
-print("THIS IS PERSON 2 LIVE CHAT")
-
-# Read messages from the database
 def handle_message_added(messages):
     show_chat = db.child("person2").get()
     a = show_chat.val()
@@ -28,4 +26,6 @@ def handle_message_added(messages):
     print(f'{a.get("sender")}: {a.get("message")}')
 
 db.child('person2').stream(handle_message_added)
+
+
 
